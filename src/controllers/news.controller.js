@@ -12,7 +12,6 @@ const loadNewsCache = async (req, res) => {
          id: index + 1,
          ...article,
         }))
-       
         console.log('Load news cache OK')
     } catch (error) {
         console.log('Load news cache FAILED')
