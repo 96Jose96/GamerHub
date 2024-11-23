@@ -9,7 +9,7 @@ const PostsControllers = {
                 title,
                 content,
                 image,
-                //agregar autor cuando esté FIREBASE
+                //agregar autor cuando esté FIREBASE aquí y en modelo
             })
             const savedPost = await newPost.save()
             res.status(201).json(savedPost)
