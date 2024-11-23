@@ -24,7 +24,7 @@ const NewsControllers = {
        try {
            res.status(200).json(newsCache)
        } catch (error) {
-           res.status(500).json({ error: 'Get news FAILED' })
+           res.status(500).json({ error: 'Get news FAILED', message: error.message })
        }
     },
 
@@ -34,12 +34,12 @@ const NewsControllers = {
             const newById = newsCache.find(item => item.id === parseInt(id))
 
             if (!newById) {
-                res.status(404).json({ error: 'New not found' })
+                res.status(404).json({ error: 'New not found', message: error.message })
             } else {
                 res.status(200).json(newById)
             }
         } catch (error) {
-            res.status(500).json({ error: 'Get new by id FAILED' })
+            res.status(500).json({ error: 'Get new by id FAILED', message: error.message })
         }
     }
 }
