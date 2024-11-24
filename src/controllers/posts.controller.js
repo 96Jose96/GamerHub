@@ -9,7 +9,7 @@ const PostsControllers = {
                 title,
                 content,
                 image,
-                //agregar autor cuando esté FIREBASE aquí y en modelo
+                author: req.user.id
             })
             const savedPost = await newPost.save()
             res.status(201).json(savedPost)
@@ -57,6 +57,25 @@ const PostsControllers = {
             }
         } catch (error) {
             res.status(500).json({ error: 'Post delete FAILED', message: error.message })
+        }
+    },
+
+    async likePost (req, res) {
+        try {
+            const { id } = req.params
+            const post = await Post.find(id)
+            if (!post) {
+                res.status(404).json({ error: 'Post not found' })
+            }
+            if (post.likes.includes(req.user.id)) {
+                post.likes = post.likes.filter(userId => userId.toString() !== req.user.id)
+            } else {
+                post.likes.push(req.user.id)
+            }
+            await post.save()
+            res.status(200).json(post)
+        } catch (error) {
+            res.status(500).json({ error: 'Like to post FAILED', message: error.message })
         }
     }
 }
