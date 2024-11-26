@@ -15,12 +15,13 @@ const RegistryController = {
         
         try {
             const decodedToken = await admin.auth().verifyIdToken(idToken)
-            const { uid } = decodedToken
             console.log(decodedToken)  
         } catch (error) {
             console.log(error)
             return res.status(403).json({ message: 'Invalid Firebase token' })
         }
+
+            const { uid } = decodedToken
     
             const existUser = await User.findOne({ $or: [{ uid }, { email }] })
             if ( existUser) {
