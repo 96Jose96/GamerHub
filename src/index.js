@@ -21,7 +21,7 @@ app.use(cors())
 app.use('/', newsRouter)
 app.use('/', registryRouter)
 
-app.use(verifyToken)
+// app.use(verifyToken)
 app.use('/', postsRouter)
 app.use('/', commentsRouter)
 
