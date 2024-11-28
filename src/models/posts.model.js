@@ -22,7 +22,7 @@ const postSchema = new mongoose.Schema ({
         text: { type: String, required: true }
     }],
     author: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'User',
         required: true
     },

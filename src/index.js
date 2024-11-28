@@ -7,6 +7,7 @@ const { loadNewsCache } = require('./controllers/news.controller.js')
 const newsRouter = require('./routes/newsRoutes.js')
 const postsRouter = require('./routes/postsRoutes.js')
 const registryRouter = require('./routes/registryRoute.js')
+const commentsRouter = require('./routes/commentsRoutes.js')
 const verifyToken = require('./middlewares/authMiddleware.js')
 
 dbConnection()
@@ -22,6 +23,7 @@ app.use('/', registryRouter)
 
 app.use(verifyToken)
 app.use('/', postsRouter)
+app.use('/', commentsRouter)
 
 
 app.listen(process.env.PORT, () => console.log(`Server listen on port ${process.env.PORT}`))
