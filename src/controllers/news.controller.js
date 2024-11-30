@@ -46,5 +46,7 @@ const NewsControllers = {
 
 module.exports = {
     NewsControllers,
-    loadNewsCache
+    loadNewsCache,
+    newsCache,
+    url
 }
