@@ -61,6 +61,19 @@ const RegistryController = {
             return res.status(500).json({ message: 'Internal server error' })
         }
        
+    },
+
+    async loginUser (req, res) {
+        const { idToken, email } = req.body
+
+        try {
+            const decodedToken = await admin.auth().verifyIdToken(idToken)
+            console.log('usuario autenticado', decodedToken)
+            res.status(200).json({ message:'User auth CORRECT', userId: decodedToken.uid })
+        } catch (error) {
+            console.log('Token verify ERROR', error)
+            res.status(401).json({ message: 'Unauthorized: token is invalid' })
+        }
     }
     
 }

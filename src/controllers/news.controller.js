@@ -41,6 +41,15 @@ const NewsControllers = {
         } catch (error) {
             res.status(500).json({ error: 'Get new by id FAILED', message: error.message })
         }
+    },
+
+    async getHomeNews (req, res) {
+        try {
+            let homeNews = newsCache.slice(0, 4)
+            res.status(200).json(homeNews)
+        } catch (error) {
+            res.status(500).json({ message: 'Error cargando' })
+        }
     }
 }
 
