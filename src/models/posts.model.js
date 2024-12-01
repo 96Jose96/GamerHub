@@ -1,3 +1,4 @@
+const { Timestamp } = require('firebase-admin/firestore')
 const mongoose = require('mongoose')
 
 const postSchema = new mongoose.Schema ({
@@ -25,11 +26,7 @@ const postSchema = new mongoose.Schema ({
         type: String,
         ref: 'User',
         required: true
-    },
-    created: {
-        type: Date,
-        default: Date.now
     }
-})
+}, { timestamps: true })
 
 module.exports = mongoose.model('Post', postSchema)

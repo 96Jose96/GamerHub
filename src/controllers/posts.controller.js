@@ -1,26 +1,48 @@
+const express = require('express')
 const Post = require('../models/posts.model.js')
+const User = require('../models/user.model.js')
+const admin = require('../config/fireBaseAdmin.js')
 
 const PostsControllers = {
     async createPost (req, res) {
-        try {
-            const { title, content, image } = req.body
+        const { title, content, image } = req.body
+        const idToken = req.headers.authorization?.split(' ')[1]
 
-            const newPost = new Post ({
+        if (!idToken) {
+            return res.status(401).json({ message: 'Unauthorized: No token provided' })
+        }
+
+        try {
+            const decodedToken = await admin.auth().verifyIdToken(idToken)
+            const uid = decodedToken.uid
+            const user = await  User.findOne({ uid })
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' })
+            }
+
+            const newPost = new Post({
                 title,
                 content,
                 image,
-                author: req.user.id
+                author: user.username
             })
+
             const savedPost = await newPost.save()
-            res.status(201).json(savedPost)
+
+            res.status(201).json({
+                message: 'Post created OK',
+                post: savedPost
+            })
         } catch (error) {
-            res.status(500).json({ error: 'Create post FAILED', message: error.message  })
+            console.error('Create post FAILED', error)
+            res.status(500).json({ message: 'Create post FAILED' })
         }
     },
 
     async getAllPosts (req, res) {
         try {
-            const posts = await Post.find()
+            const posts = await Post.find().sort({ createdAt: -1 })
             res.status(200).json(posts)
         } catch (error) {
             res.status(500).json({ error: 'Get all posts FAILED', message: error.message })
