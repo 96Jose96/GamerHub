@@ -50,35 +50,67 @@ const PostsControllers = {
     },
 
     async updatePost (req, res) {
-        try {
-            const { id } = req.params
-            const updatedPost = await Post.findByIdAndUpdate(
-                id,
-                { $set: req.body },
-                { new: true }
-            )
+        const { postId, title, content, image } = req.body
+        const idToken = req.headers.authorization?.split(' ')[1]
 
-            if (!updatedPost) {
-                res.status(404).json({ error: 'This post does not exist', message: error.message })
-            } else {
-                res.status(200).json(updatedPost)
+        if (!idtoken) {
+            return res.status(401).json({ message: 'Unauthorized: No token provided' })
+        }
+
+        try {
+            const decodedToken = await admin.auth().verifyIdToken(idToken)
+            const uid = decodedToken.uid
+            const user = await User.findOne({ uid })
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' })
             }
+
+            const post = await Post.findOne({ _id: postId, author: user.username })
+
+            if (!post) {
+                return res.status(404).json({ message: 'Not authorized to edit this post' })
+            }
+
+            post.title = title || post.title
+            post.content = content || post.content
+            post.image = image || post.image
+
+            const updatedPost = await post.save()
+            
+            res.status(200).json({ message: 'Post updated successfully', post: updatedPost })
         } catch (error) {
-            res.status(500).json({ error: 'Update post FAILED', message: error.message })
+            res.status(500).json({ message: 'Update post FAILED' })
         }
     },
 
     async deletePost (req, res) {
+        const { postId } = req.params
+        const idToken = req.headers.authorization()?.split(' ')[1]
+
+        if (!idToken) {
+            res.status(401).json({ message: 'Unauthorized: no token provided' })
+        }
+
         try {
-            const { id } = req.params
-            const deletedPost = await Post.findByIdAndDelete(id)
-            if (!deletedPost) {
-                res.status(404).json({ error: 'This post does not exist', message: error.message })
-            } else {
-                res.status(200).json({ message: 'Post deleted OK' })
+            const decodedToken = await admin.auth().verifyIdToken(idToken)
+            const uid = decodedToken.uid
+            const user = await User.findOne({ uid })
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' })
             }
+
+            const post = await Post.findOne({ _id: postId, author: user.username })
+
+            if (!post) {
+                return res.status(404).json({ message: 'Not authorized to delete this post' })
+            }
+
+            await Post.deleteOne({ _id: postId })
+            res.status(200).json({ message: 'Post delete OK' })
         } catch (error) {
-            res.status(500).json({ error: 'Post delete FAILED', message: error.message })
+            res.status(500).json({ message: 'Post deleted FAILED' })
         }
     },
 
