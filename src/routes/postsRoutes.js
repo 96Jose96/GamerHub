@@ -7,6 +7,8 @@ postsRouter.post('/posts/create', PostsControllers.createPost)
 postsRouter.put('/posts/update/:id', PostsControllers.updatePost)
 postsRouter.delete('/posts/delete/:id', PostsControllers.deletePost)
 
-postsRouter.post('/like/:id', PostsControllers.likePost)
+//ostsRouter.get('/my-posts', PostsControllers.)
+
+//postsRouter.post('/like/:id', PostsControllers.likePost)
 
 module.exports = postsRouter
