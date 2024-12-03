@@ -11,15 +11,13 @@ const commentsRouter = require('./routes/commentsRoutes.js')
 const verifyToken = require('./middlewares/authMiddleware.js')
 
 dbConnection()
-app.use(cors({
-    origin: '*'
-}))
+
 
 
 loadNewsCache()
 setInterval(loadNewsCache, 3600000)
 
-
+app.use(cors())
 app.use(express.json())
 
 
