@@ -11,7 +11,9 @@ const commentsRouter = require('./routes/commentsRoutes.js')
 const verifyToken = require('./middlewares/authMiddleware.js')
 
 dbConnection()
-app.use(cors())
+app.use(cors({
+    allowedHeaders: ['content-type', 'Authorization']
+}))
 
 
 loadNewsCache()
