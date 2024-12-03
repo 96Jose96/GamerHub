@@ -7,7 +7,7 @@ postsRouter.post('/posts/create', PostsControllers.createPost)
 postsRouter.put('/posts/update', PostsControllers.updatePost)
 postsRouter.delete('/posts/delete', PostsControllers.deletePost)
 
-postsRouter.get('/my-posts', PostsControllers.getMyPosts)
+postsRouter.get('posts/my-posts', PostsControllers.getMyPosts)
 
 
 //postsRouter.post('/like/:id', PostsControllers.likePost)
