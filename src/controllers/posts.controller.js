@@ -74,7 +74,7 @@ const PostsControllers = {
             })
         } catch (error) {
             console.error('Get posts FAILED', error)
-            res.status(500).json({ message: 'Get posts FAILED', error })
+            res.status(500).json({ message: 'Get posts FAILED' })
         }
     },
 
@@ -82,7 +82,7 @@ const PostsControllers = {
         const { postId, title, content, image } = req.body
         const idToken = req.headers.authorization?.split(' ')[1]
 
-        if (!idtoken) {
+        if (!idToken) {
             return res.status(401).json({ message: 'Unauthorized: No token provided' })
         }
 
@@ -113,36 +113,43 @@ const PostsControllers = {
         }
     },
 
-    async deletePost (req, res) {
-        const decodedToken = await admin.auth().verifyIdToken(idToken)
-        const uid = decodedToken.uid
-        const user = await User.findOne({ uid })
+    async deletePost(req, res) {
+        const idToken = req.headers.authorization?.split(' ')[1]
 
         if (!idToken) {
-            res.status(401).json({ message: 'Unauthorized. No token provided' })
+            return res.status(401).json({ message: 'Unauthorized. No token provided' })
         }
-
+    
         try {
             const decodedToken = await admin.auth().verifyIdToken(idToken)
             const uid = decodedToken.uid
+    
             const user = await User.findOne({ uid })
-
             if (!user) {
                 return res.status(404).json({ message: 'User not found' })
             }
-
-            const post = await Post.findOne({ _id: postId, author: user.username })
-
-            if (!post) {
-                return res.status(404).json({ message: 'Not authorized to delete this post' })
+    
+            const postId = req.params.id
+    
+            if (!postId) {
+                return res.status(400).json({ message: 'Post ID is required' })
             }
-
+    
+            const post = await Post.findOne({ _id: postId, author: user.username })
+    
+            if (!post) {
+                return res.status(404).json({ message: 'Post not found or not authorized to delete it' })
+            }
+    
             await Post.deleteOne({ _id: postId })
-            res.status(200).json({ message: 'Post delete OK' })
+            return res.status(200).json({ message: 'Post deleted OK' })
+    
         } catch (error) {
-            res.status(500).json({ message: 'Post deleted FAILED' })
+            console.error('Delete post failed', error)
+            return res.status(500).json({ message: 'Delete post FAILED' })
         }
     },
+    
 
     async likePost (req, res) {
         try {
