@@ -10,7 +10,7 @@ const RegistryController = {
         const { idToken, username, email, password, profileimage } = req.body
         try {
             if (!idToken || !username || !email || !password) {
-               return res.status(400).json({ message: 'All fields must be completed' })
+               return res.status(400).json({ message: 'Todos los campos deben estar rellenos' })
             }
 
             let decodedToken
@@ -27,7 +27,7 @@ const RegistryController = {
 
             if (existUser) {
                  return res.status(409).json({
-                    message: existUser.email === email ? 'This email is already registered' : 'This uid is already registered'
+                    message: existUser.email === email ? 'Este email ya está registrado' : 'Este nombre de usuario ya está en uso'
                  })
             }
     
@@ -45,12 +45,12 @@ const RegistryController = {
             await newUser.save()
     
             return res.status(201).json({
-                message: 'User registry correct',
+                message: 'Usuario registrado con éxito',
                 user: {
                     uid: newUser.uid,
                     username: newUser.username,
                     email: newUser.email,
-                    profileimage: newUser.profileimage
+                    // profileimage: newUser.profileimage
                 }
             })
             
