@@ -12,7 +12,7 @@ const verifyToken = require('./middlewares/authMiddleware.js')
 
 dbConnection()
 app.use(cors({
-    allowedHeaders: ['content-type', 'Authorization']
+    origin: '*'
 }))
 
 
