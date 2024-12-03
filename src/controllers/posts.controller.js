@@ -45,7 +45,36 @@ const PostsControllers = {
             const posts = await Post.find().sort({ createdAt: -1 })
             res.status(200).json(posts)
         } catch (error) {
-            res.status(500).json({ error: 'Get all posts FAILED', message: error.message })
+            res.status(500).json({ message: 'Get all posts FAILED' })
+        }
+    },
+
+    async getMyPosts (req, res) {
+        const idToken = req.headers.authorization?.split(' ')[1]
+
+        if (!idToken) {
+            return res.status(401).json({ message: 'Unauthorized. No token provided' })
+        }
+
+        try {
+            const decodedToken = await admin.auth().verifyIdToken(idToken)
+            const uid = decodedToken.uid
+
+            const user = await User.findOne({ uid })
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' })
+            }
+
+            const myPosts = await Post.find({ author: user.username })
+
+            res.status(200).json({
+                message: 'Get posts sucessfully',
+                posts: myPosts
+            })
+        } catch (error) {
+            console.error('Get posts FAILED', error)
+            res.status(500).json({ message: 'Get posts FAILED', error })
         }
     },
 
@@ -85,11 +114,12 @@ const PostsControllers = {
     },
 
     async deletePost (req, res) {
-        const { postId } = req.params
-        const idToken = req.headers.authorization()?.split(' ')[1]
+        const decodedToken = await admin.auth().verifyIdToken(idToken)
+        const uid = decodedToken.uid
+        const user = await User.findOne({ uid })
 
         if (!idToken) {
-            res.status(401).json({ message: 'Unauthorized: no token provided' })
+            res.status(401).json({ message: 'Unauthorized. No token provided' })
         }
 
         try {
